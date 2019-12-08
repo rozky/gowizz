@@ -15,7 +15,12 @@ type WizzClient struct {
 type parser func([]byte) (interface{}, error)
 
 // NewClient Creates a new WizzClient
-func NewClient(metadataURL string) (*WizzClient, error) {
+func NewClient() (*WizzClient, error) {
+	return NewCustomClient(MetadataURL)
+}
+
+// NewCustomClient Creates a new WizzClient using provided matadata URL to retrieve current Wizzair API URL
+func NewCustomClient(metadataURL string) (*WizzClient, error) {
 	httpClient := resty.New()
 	if resp, err := httpClient.R().Get(metadataURL); err != nil {
 		return nil, err
@@ -31,8 +36,8 @@ func NewClient(metadataURL string) (*WizzClient, error) {
 	}
 }
 
-// CopyClient Creates copy of existing client. 
-// Motivation: Using same client to do 2+ request causes 2nd request to be rejected by Wizzair 
+// CopyClient Creates copy of existing client.
+// Motivation: Using same client to do 2+ request causes 2nd request to be rejected by Wizzair
 // (could not figured out why, closing connection didn't helped, cleaning cookies no luck either)
 func CopyClient(wizz *WizzClient) *WizzClient {
 	httpClient := resty.New()
@@ -67,10 +72,6 @@ func (wizz *WizzClient) doGet(path string, respDto interface{}) error {
 		SetResult(respDto).
 		Get(path)
 
-	if resp != nil {
-		fmt.Println("Time:", resp.Time())
-	}
-
 	if resp != nil && resp.IsError() {
 		return fmt.Errorf("Request failed. Status %d. Body: %s", resp.StatusCode(), string(resp.Body()))
 	}
@@ -88,12 +89,6 @@ func (wizz *WizzClient) doPost(path string, reqDto interface{}, respDto interfac
 		SetBody(reqDto).
 		SetResult(respDto).
 		Post(path)
-
-	if resp != nil {
-		// fmt.Println("Trace Info:", resp.Request.TraceInfo().IsConnReused)
-		fmt.Println("Time:", resp.Time())
-		// fmt.Println("Body:", resp.Body())
-	}
 
 	if resp != nil && resp.IsError() {
 		return fmt.Errorf("Request failed. Status %d. Body: %s", resp.StatusCode(), string(resp.Body()))

@@ -10,21 +10,25 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const (
+	debugEnabled = false
+)
+
 func TestNewClient(t *testing.T) {
 
 	// when
-	client, err := NewClient(MetadataURL)
+	wizz, err := NewCustomClient(MetadataURL)
 
 	// then
 	require.Nil(t, err)
-	assert.NotNil(t, client)
+	assert.NotNil(t, wizz)
 }
 
 func TestGetCities(t *testing.T) {
-	client, _ := NewClient(MetadataURL)
+	wizz, _ := NewCustomClient(MetadataURL)
 
 	// when
-	respDto, err := client.GetCities()
+	respDto, err := wizz.GetCities()
 
 	// then
 	require.Nil(t, err)
@@ -42,7 +46,7 @@ func TestGetCities(t *testing.T) {
 }
 
 func TestSearchFlights(t *testing.T) {
-	client, _ := NewClient(MetadataURL)
+	wizz, _ := NewCustomClient(MetadataURL)
 
 	reqDto := SearchFilterDto{
 		FlightList: []FlightFilter{
@@ -59,8 +63,8 @@ func TestSearchFlights(t *testing.T) {
 	}
 
 	// when
-	respDto, err := client.SearchFlights(reqDto)
-	fmt.Printf("%+v\n", respDto)
+	respDto, err := wizz.SearchFlights(reqDto)
+	log(respDto)
 
 	// then
 	require.Nil(t, err)
@@ -68,7 +72,7 @@ func TestSearchFlights(t *testing.T) {
 }
 
 func TestTimetableSearch(t *testing.T) {
-	client, _ := NewClient(MetadataURL)
+	wizz, _ := NewCustomClient(MetadataURL)
 
 	reqDto := TimetableSearchFilterDto{
 		FlightList: []TimetableFlightFilter{
@@ -86,8 +90,8 @@ func TestTimetableSearch(t *testing.T) {
 	}
 
 	// when
-	respDto, err := client.TimetableSearch(reqDto)
-	fmt.Printf("Result: %+v\n", respDto)
+	respDto, err := wizz.TimetableSearch(reqDto)
+	log(respDto)
 
 	// then
 	require.Nil(t, err)
@@ -103,4 +107,11 @@ func TestTimetableSearch(t *testing.T) {
 	require.NotNil(t, respDto.OutboundFlights[0].Price)
 	assert.NotEmpty(t, respDto.OutboundFlights[0].Price.Amount)
 	assert.NotEmpty(t, respDto.OutboundFlights[0].Price.CurrencyCode)
+}
+
+
+func log(resp interface{}) {
+	if debugEnabled {
+		fmt.Printf("%+v\n", resp)
+	}
 }

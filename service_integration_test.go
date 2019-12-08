@@ -8,10 +8,10 @@ import (
 )
 
 func TestGetAllConnections(t *testing.T) {
-	client, _ := NewClient(MetadataURL)
+	wizz, _ := NewCustomClient(MetadataURL)
 
 	// when
-	connections, err := client.GetAllConnections()
+	connections, err := wizz.GetAllConnections()
 	fmt.Printf("%d\n", len(connections))
 	fmt.Printf("%+v\n", connections)
 
@@ -22,7 +22,7 @@ func TestGetAllConnections(t *testing.T) {
 }
 
 func TestGetFlightPrices(t *testing.T) {
-	client, _ := NewClient(MetadataURL)
+	wizz, _ := NewCustomClient(MetadataURL)
 	connection := FlightConnection{
 		DepartureStation: "LTN",
 		ArrivalStation:   "BTS",
@@ -30,7 +30,7 @@ func TestGetFlightPrices(t *testing.T) {
 	}
 
 	// when
-	connections, err := client.GetFlightPrices(connection, 15)
+	connections, err := wizz.GetFlightPrices(connection, 15)
 	fmt.Printf("%d\n", len(connections))
 	fmt.Printf("%+v\n", connections)
 
