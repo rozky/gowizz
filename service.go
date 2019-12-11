@@ -1,8 +1,18 @@
 package gowizz
 
-import "time"
+import (
+	"sort"
+	"time"
 
-import "sync"
+	"sync"
+)
+
+// ByDepartureDate implements sort.Interface based on the ByDepartureDate field
+type ByDepartureDate []TimetableOutboundFlight
+
+func (a ByDepartureDate) Len() int           { return len(a) }
+func (a ByDepartureDate) Less(i, j int) bool { return a[i].DepartureDate < a[j].DepartureDate }
+func (a ByDepartureDate) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 
 // GetAllConnections Retrieves all Wizzair connections
 func (wizz *WizzClient) GetAllConnections() ([]FlightConnection, error) {
@@ -11,22 +21,22 @@ func (wizz *WizzClient) GetAllConnections() ([]FlightConnection, error) {
 		return nil, err
 	}
 
-	var result = make([]FlightConnection, 0, 500)
+	var connections = make([]FlightConnection, 0, 500)
 	for _, departureAirport := range cities.Cities {
 		for _, arrivalAirport := range departureAirport.Connections {
 			// do something
-			result = append(result, FlightConnection{
+			connections = append(connections, FlightConnection{
 				DepartureStation: departureAirport.Iata,
 				ArrivalStation:   arrivalAirport.Iata,
 			})
 		}
 	}
 
-	return result, nil
+	return connections, nil
 }
 
-// GetFlightPrices Get flight prices for a given connection over given number of months
-func (wizz *WizzClient) GetFlightPrices(flight FlightConnection, months int) ([]TimetableOutboundFlight, error) {
+// GetPricesParallel Get flight prices for a given connection over given number of months
+func (wizz *WizzClient) GetPricesParallel(flight FlightConnection, months int) ([]TimetableOutboundFlight, error) {
 
 	outChannel := make(chan []TimetableOutboundFlight)
 
@@ -34,7 +44,7 @@ func (wizz *WizzClient) GetFlightPrices(flight FlightConnection, months int) ([]
 
 	for _, tRange := range GenTimeRanges(time.Now(), 30*Day, months) {
 		wg.Add(1)
-		go wizz.GetPricesByRange(flight, tRange, outChannel, &wg)
+		go wizz.GetPrices(flight, tRange, outChannel, &wg)
 	}
 
 	go func() {
@@ -47,11 +57,13 @@ func (wizz *WizzClient) GetFlightPrices(flight FlightConnection, months int) ([]
 		result = append(result, prices...)
 	}
 
+	sort.Sort(ByDepartureDate(result))
+
 	return result, nil
 }
 
-// GetPricesByRange Get a flight prices for single time range
-func (wizz *WizzClient) GetPricesByRange(flight FlightConnection, tRange TimeRange, out chan []TimetableOutboundFlight, wg *sync.WaitGroup) {
+// GetPrices Get a flight prices for single time range
+func (wizz *WizzClient) GetPrices(flight FlightConnection, tRange TimeRange, out chan []TimetableOutboundFlight, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	filter := TimetableSearchFilterDto{

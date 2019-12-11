@@ -30,7 +30,7 @@ func TestGetFlightPrices(t *testing.T) {
 	}
 
 	// when
-	connections, err := wizz.GetFlightPrices(connection, 20)
+	connections, err := wizz.GetPricesParallel(connection, 2)
 	fmt.Printf("%d\n", len(connections))
 	fmt.Printf("%+v\n", connections)
 
