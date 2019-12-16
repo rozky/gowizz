@@ -115,8 +115,3 @@ type TimetableOutboundFlight struct {
 	DepartureDates   []string    `json:"departureDates"`
 	Price            FlightPrice `json:"price"`
 }
-
-type FlightConnection struct {
-	DepartureStation string
-	ArrivalStation   string
-}

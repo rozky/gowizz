@@ -3,6 +3,7 @@ module github.com/rozky/gowizz
 go 1.12
 
 require (
+	github.com/aws/aws-lambda-go v1.13.3 // indirect
 	github.com/aws/aws-sdk-go v1.25.48 // indirect
 	github.com/fsnotify/fsnotify v1.4.7 // indirect
 	github.com/go-resty/resty/v2 v2.1.0
