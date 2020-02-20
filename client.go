@@ -83,8 +83,9 @@ func (wizz *WizzClient) doPost(path string, reqDto interface{}, respDto interfac
 	resp, err := wizz.client.
 		// EnableTrace().
 		NewRequest().
-		SetHeader("Content-Type", "application/json").
+		SetHeader("Content-Type", "application/json;charset=UTF-8").
 		SetHeader("User-Agent", UserAgent).
+		SetHeader("Accept-Encoding", "gzip, deflate, br").
 		// SetHeader("Cookie", "").
 		SetBody(reqDto).
 		SetResult(respDto).

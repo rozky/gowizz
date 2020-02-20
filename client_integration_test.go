@@ -5,9 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/require"
-
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -53,7 +52,7 @@ func TestSearchFlights(t *testing.T) {
 			FlightFilter{
 				DepartureStation: "TAT",
 				ArrivalStation:   "LTN",
-				DepartureDate:    "2019-12-18",
+				DepartureDate:    "2020-06-10",
 			},
 		},
 		AdultCount:  1,
@@ -108,7 +107,6 @@ func TestTimetableSearch(t *testing.T) {
 	assert.NotEmpty(t, respDto.OutboundFlights[0].Price.Amount)
 	assert.NotEmpty(t, respDto.OutboundFlights[0].Price.CurrencyCode)
 }
-
 
 func log(resp interface{}) {
 	if debugEnabled {
