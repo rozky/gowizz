@@ -14,6 +14,15 @@ type WizzClient struct {
 
 type parser func([]byte) (interface{}, error)
 
+// NewClientOrErr Creates a new WizzClient or panic with error
+func NewClientOrErr() *WizzClient {
+	if client, err := NewCustomClient(MetadataURL); err != nil {
+		panic(err)
+	} else {
+		return client
+	}
+}
+
 // NewClient Creates a new WizzClient
 func NewClient() (*WizzClient, error) {
 	return NewCustomClient(MetadataURL)
@@ -22,7 +31,7 @@ func NewClient() (*WizzClient, error) {
 // NewCustomClient Creates a new WizzClient using provided matadata URL to retrieve current Wizzair API URL
 func NewCustomClient(metadataURL string) (*WizzClient, error) {
 	httpClient := resty.New()
-	if resp, err := httpClient.R().Get(metadataURL); err != nil {
+	if resp, err := httpClient.R().SetHeader("User-Agent", UserAgent).Get(metadataURL); err != nil {
 		return nil, err
 	} else if metadataDto, err := parseMetadataDto(resp.Body()); err != nil {
 		return nil, err
@@ -86,7 +95,6 @@ func (wizz *WizzClient) doPost(path string, reqDto interface{}, respDto interfac
 		SetHeader("Content-Type", "application/json;charset=UTF-8").
 		SetHeader("User-Agent", UserAgent).
 		SetHeader("Accept-Encoding", "gzip, deflate, br").
-		// SetHeader("Cookie", "").
 		SetBody(reqDto).
 		SetResult(respDto).
 		Post(path)

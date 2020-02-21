@@ -90,6 +90,24 @@ func TestTimetableSearch(t *testing.T) {
 
 	// when
 	respDto, err := wizz.TimetableSearch(reqDto)
+	require.Nil(t, err)
+
+	wizz, _ = NewCustomClient(MetadataURL)
+	respDto, err = wizz.TimetableSearch(reqDto)
+	require.Nil(t, err)
+
+	wizz, _ = NewCustomClient(MetadataURL)
+	respDto, err = wizz.TimetableSearch(reqDto)
+	require.Nil(t, err)
+
+	wizz, _ = NewCustomClient(MetadataURL)
+	respDto, err = wizz.TimetableSearch(reqDto)
+	require.Nil(t, err)
+
+	wizz, _ = NewCustomClient(MetadataURL)
+	respDto, err = wizz.TimetableSearch(reqDto)
+	require.Nil(t, err)
+
 	log(respDto)
 
 	// then
