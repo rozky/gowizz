@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	debugEnabled = false
+	debugEnabled = true
 )
 
 func TestNewClient(t *testing.T) {
@@ -81,6 +81,12 @@ func TestTimetableSearch(t *testing.T) {
 				From:             time.Now().AddDate(0, 0, 31).Format("2006-01-02"),
 				To:               time.Now().AddDate(0, 0, 61).Format("2006-01-02"),
 			},
+			TimetableFlightFilter{
+				DepartureStation: "LTN",
+				ArrivalStation:   "TAT",
+				From:             time.Now().AddDate(0, 0, 31).Format("2006-01-02"),
+				To:               time.Now().AddDate(0, 0, 61).Format("2006-01-02"),
+			},
 		},
 		AdultCount:  1,
 		ChildCount:  0,
@@ -92,21 +98,21 @@ func TestTimetableSearch(t *testing.T) {
 	respDto, err := wizz.TimetableSearch(reqDto)
 	require.Nil(t, err)
 
-	wizz, _ = NewCustomClient(MetadataURL)
-	respDto, err = wizz.TimetableSearch(reqDto)
-	require.Nil(t, err)
+	// wizz, _ = NewCustomClient(MetadataURL)
+	// respDto, err = wizz.TimetableSearch(reqDto)
+	// require.Nil(t, err)
 
-	wizz, _ = NewCustomClient(MetadataURL)
-	respDto, err = wizz.TimetableSearch(reqDto)
-	require.Nil(t, err)
+	// wizz, _ = NewCustomClient(MetadataURL)
+	// respDto, err = wizz.TimetableSearch(reqDto)
+	// require.Nil(t, err)
 
-	wizz, _ = NewCustomClient(MetadataURL)
-	respDto, err = wizz.TimetableSearch(reqDto)
-	require.Nil(t, err)
+	// wizz, _ = NewCustomClient(MetadataURL)
+	// respDto, err = wizz.TimetableSearch(reqDto)
+	// require.Nil(t, err)
 
-	wizz, _ = NewCustomClient(MetadataURL)
-	respDto, err = wizz.TimetableSearch(reqDto)
-	require.Nil(t, err)
+	// wizz, _ = NewCustomClient(MetadataURL)
+	// respDto, err = wizz.TimetableSearch(reqDto)
+	// require.Nil(t, err)
 
 	log(respDto)
 

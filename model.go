@@ -106,6 +106,7 @@ type TimetableFlightFilter struct {
 
 type TimetableSearchResultDto struct {
 	OutboundFlights []TimetableOutboundFlight `json:"outboundFlights"`
+	ReturnFlights   []TimetableOutboundFlight `json:"returnFlights"`
 }
 
 type TimetableOutboundFlight struct {

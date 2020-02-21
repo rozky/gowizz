@@ -99,6 +99,8 @@ func (wizz *WizzClient) doPost(path string, reqDto interface{}, respDto interfac
 		SetResult(respDto).
 		Post(path)
 
+	// fmt.Print(string(resp.Body()))
+
 	if resp != nil && resp.IsError() {
 		return fmt.Errorf("Request failed. Status %d. Body: %s", resp.StatusCode(), string(resp.Body()))
 	}
