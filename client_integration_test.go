@@ -2,6 +2,7 @@ package gowizz
 
 import (
 	"fmt"
+	"math/rand"
 	"testing"
 	"time"
 
@@ -13,6 +14,18 @@ const (
 	debugEnabled = true
 )
 
+type ConnectionId struct {
+	Departure   string
+	Destination string
+}
+
+func (id ConnectionId) returnId() ConnectionId {
+	return ConnectionId{
+		Departure:   id.Destination,
+		Destination: id.Departure,
+	}
+}
+
 func TestNewClient(t *testing.T) {
 
 	// when
@@ -21,6 +34,52 @@ func TestNewClient(t *testing.T) {
 	// then
 	require.Nil(t, err)
 	assert.NotNil(t, wizz)
+}
+
+func TestGetConnections(t *testing.T) {
+	cities := getCities()
+
+	connections := cities.GetConnections()
+
+	fmt.Printf("\n\nCount = %d\n\n", len(connections))
+
+	for _, connection := range connections {
+		fmt.Printf("%+v\n", connection)
+	}
+}
+
+func TestGetMultiplePrices(t *testing.T) {
+	rand.Seed(time.Now().UnixNano())
+
+	cities := getCities()
+
+	//fmt.Printf("Total count = %d\n\n", getConnections(cities))
+	//fmt.Printf("Unique count = %d\n\n", len(getConnectionMap(cities)))
+
+	startTime := time.Now()
+	count := 0
+
+	for _, departure := range cities.Cities[:1] {
+		for _, destination := range departure.Connections {
+			outboundId := ConnectionId{
+				Departure:   departure.Iata,
+				Destination: destination.Iata,
+			}
+
+			getPrices(outboundId, false)
+			count++
+		}
+	}
+
+	//connectionMap := getConnectionMap(cities)
+	//for key, _ := range connectionMap {
+	//	if processed, ok := connectionMap[key.returnId()]; ok {
+	//		getPrices(key, connectionMap[key.returnId()] != nil)
+	//	}
+	//}
+
+	fmt.Printf("count = %d\ntook %v\n\n", count, time.Now().Sub(startTime))
+
 }
 
 func TestGetCities(t *testing.T) {
@@ -71,6 +130,8 @@ func TestSearchFlights(t *testing.T) {
 }
 
 func TestTimetableSearch(t *testing.T) {
+	rand.Seed(time.Now().UnixNano())
+
 	wizz, _ := NewCustomClient(MetadataURL)
 
 	reqDto := TimetableSearchFilterDto{
@@ -97,39 +158,110 @@ func TestTimetableSearch(t *testing.T) {
 	// when
 	respDto, err := wizz.TimetableSearch(reqDto)
 	require.Nil(t, err)
-
-	// wizz, _ = NewCustomClient(MetadataURL)
-	// respDto, err = wizz.TimetableSearch(reqDto)
-	// require.Nil(t, err)
-
-	// wizz, _ = NewCustomClient(MetadataURL)
-	// respDto, err = wizz.TimetableSearch(reqDto)
-	// require.Nil(t, err)
-
-	// wizz, _ = NewCustomClient(MetadataURL)
-	// respDto, err = wizz.TimetableSearch(reqDto)
-	// require.Nil(t, err)
-
-	// wizz, _ = NewCustomClient(MetadataURL)
-	// respDto, err = wizz.TimetableSearch(reqDto)
-	// require.Nil(t, err)
-
 	log(respDto)
 
-	// then
+	wizz, _ = NewCustomClient(MetadataURL)
+	//time.Sleep(time.Duration(5) * time.Second)
+	respDto, err = wizz.TimetableSearch(reqDto)
 	require.Nil(t, err)
-	require.NotNil(t, respDto)
+	log(respDto)
 
-	// and response contains at least 1 city
-	require.NotEmpty(t, respDto.OutboundFlights)
-	assert.NotEmpty(t, respDto.OutboundFlights[0].DepartureStation)
-	assert.NotEmpty(t, respDto.OutboundFlights[0].ArrivalStation)
-	assert.NotEmpty(t, respDto.OutboundFlights[0].DepartureDate)
-	assert.NotEmpty(t, respDto.OutboundFlights[0].DepartureDates)
+	//wizz, _ = NewCustomClient(MetadataURL)
+	//respDto, err = wizz.TimetableSearch(reqDto)
+	//require.Nil(t, err)
+	//log(respDto)
 
-	require.NotNil(t, respDto.OutboundFlights[0].Price)
-	assert.NotEmpty(t, respDto.OutboundFlights[0].Price.Amount)
-	assert.NotEmpty(t, respDto.OutboundFlights[0].Price.CurrencyCode)
+	// wizz, _ = NewCustomClient(MetadataURL)
+	// respDto, err = wizz.TimetableSearch(reqDto)
+	// require.Nil(t, err)
+
+	// wizz, _ = NewCustomClient(MetadataURL)
+	// respDto, err = wizz.TimetableSearch(reqDto)
+	// require.Nil(t, err)
+
+	//log(respDto)
+	//
+	//// then
+	//require.Nil(t, err)
+	//require.NotNil(t, respDto)
+	//
+	//// and response contains at least 1 city
+	//require.NotEmpty(t, respDto.OutboundFlights)
+	//assert.NotEmpty(t, respDto.OutboundFlights[0].DepartureStation)
+	//assert.NotEmpty(t, respDto.OutboundFlights[0].ArrivalStation)
+	//assert.NotEmpty(t, respDto.OutboundFlights[0].DepartureDate)
+	//assert.NotEmpty(t, respDto.OutboundFlights[0].DepartureDates)
+	//
+	//require.NotNil(t, respDto.OutboundFlights[0].Price)
+	//assert.NotEmpty(t, respDto.OutboundFlights[0].Price.Amount)
+	//assert.NotEmpty(t, respDto.OutboundFlights[0].Price.CurrencyCode)
+}
+
+func getPrices(outboundId ConnectionId, oneWay bool) {
+	wizz, _ := NewCustomClient(MetadataURL)
+
+	reqDto := TimetableSearchFilterDto{
+		FlightList: []TimetableFlightFilter{
+			{
+				DepartureStation: outboundId.Departure,
+				ArrivalStation:   outboundId.Destination,
+				From:             time.Now().AddDate(0, 0, 31).Format("2006-01-02"),
+				To:               time.Now().AddDate(0, 0, 61).Format("2006-01-02"),
+			},
+			{
+				DepartureStation: outboundId.Destination,
+				ArrivalStation:   outboundId.Departure,
+				From:             time.Now().AddDate(0, 0, 31).Format("2006-01-02"),
+				To:               time.Now().AddDate(0, 0, 61).Format("2006-01-02"),
+			},
+		},
+		AdultCount:  1,
+		ChildCount:  0,
+		InfantCount: 0,
+		Wdc:         false,
+	}
+
+	// when
+	if respDto, err := wizz.TimetableSearch(reqDto); err != nil {
+		panic(err)
+	} else {
+		log(respDto)
+	}
+}
+
+func getCities() *CitiesDto {
+	wizz, _ := NewCustomClient(MetadataURL)
+
+	// when
+	if cities, err := wizz.GetCities(); err != nil {
+		panic(err)
+	} else {
+		return cities
+	}
+}
+
+func getConnections(cities *CitiesDto) (count int) {
+	for _, departure := range cities.Cities {
+		count += len(departure.Connections)
+	}
+
+	return count
+}
+
+func getConnectionMap(cities *CitiesDto) map[ConnectionId]bool {
+	result := make(map[ConnectionId]bool)
+
+	for _, departure := range cities.Cities {
+		for _, destination := range departure.Connections {
+			key := ConnectionId{
+				Departure:   departure.Iata,
+				Destination: destination.Iata,
+			}
+			result[key] = false
+		}
+	}
+
+	return result
 }
 
 func log(resp interface{}) {

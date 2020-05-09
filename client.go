@@ -31,7 +31,7 @@ func NewClient() (*WizzClient, error) {
 // NewCustomClient Creates a new WizzClient using provided matadata URL to retrieve current Wizzair API URL
 func NewCustomClient(metadataURL string) (*WizzClient, error) {
 	httpClient := resty.New()
-	if resp, err := httpClient.R().SetHeader("User-Agent", UserAgent).Get(metadataURL); err != nil {
+	if resp, err := httpClient.R().SetHeader("User-Agent", GetRandomUserAgent()).Get(metadataURL); err != nil {
 		return nil, err
 	} else if metadataDto, err := parseMetadataDto(resp.Body()); err != nil {
 		return nil, err
@@ -39,7 +39,7 @@ func NewCustomClient(metadataURL string) (*WizzClient, error) {
 		return &WizzClient{
 			client: httpClient.
 				SetHostURL(metadataDto.ApiURL).
-				SetCloseConnection(true).
+				SetCloseConnection(false).
 				SetDebug(false),
 		}, nil
 	}
@@ -79,6 +79,9 @@ func (wizz *WizzClient) GetCities() (*CitiesDto, error) {
 func (wizz *WizzClient) doGet(path string, respDto interface{}) error {
 	resp, err := wizz.client.R().
 		SetResult(respDto).
+		SetHeader("Content-Type", "application/json;charset=UTF-8").
+		SetHeader("User-Agent", UserAgent).
+		SetHeader("Accept-Encoding", "gzip, deflate, br").
 		Get(path)
 
 	if resp != nil && resp.IsError() {
