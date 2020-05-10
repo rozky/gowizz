@@ -52,6 +52,14 @@ func (cities *CitiesDto) ConnectionExists(fromIota string, toIota string) bool {
 	return false
 }
 
+func (cities *CitiesDto) CountConnections() (count int) {
+	for _, departure := range cities.Cities {
+		count += len(departure.Connections)
+	}
+
+	return count
+}
+
 func (cities *CitiesDto) GetConnections() []Connection {
 	var result []Connection
 

@@ -19,13 +19,6 @@ type ConnectionId struct {
 	Destination string
 }
 
-func (id ConnectionId) returnId() ConnectionId {
-	return ConnectionId{
-		Departure:   id.Destination,
-		Destination: id.Departure,
-	}
-}
-
 func TestNewClient(t *testing.T) {
 
 	// when
@@ -66,7 +59,7 @@ func TestGetMultiplePrices(t *testing.T) {
 				Destination: destination.Iata,
 			}
 
-			getPrices(outboundId, false)
+			getPrices(outboundId)
 			count++
 		}
 	}
@@ -197,7 +190,7 @@ func TestTimetableSearch(t *testing.T) {
 	//assert.NotEmpty(t, respDto.OutboundFlights[0].Price.CurrencyCode)
 }
 
-func getPrices(outboundId ConnectionId, oneWay bool) {
+func getPrices(outboundId ConnectionId) {
 	wizz, _ := NewCustomClient(MetadataURL)
 
 	reqDto := TimetableSearchFilterDto{
@@ -238,30 +231,6 @@ func getCities() *CitiesDto {
 	} else {
 		return cities
 	}
-}
-
-func getConnections(cities *CitiesDto) (count int) {
-	for _, departure := range cities.Cities {
-		count += len(departure.Connections)
-	}
-
-	return count
-}
-
-func getConnectionMap(cities *CitiesDto) map[ConnectionId]bool {
-	result := make(map[ConnectionId]bool)
-
-	for _, departure := range cities.Cities {
-		for _, destination := range departure.Connections {
-			key := ConnectionId{
-				Departure:   departure.Iata,
-				Destination: destination.Iata,
-			}
-			result[key] = false
-		}
-	}
-
-	return result
 }
 
 func log(resp interface{}) {

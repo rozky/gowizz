@@ -45,19 +45,6 @@ func NewCustomClient(metadataURL string) (*WizzClient, error) {
 	}
 }
 
-// CopyClient Creates copy of existing client.
-// Motivation: Using same client to do 2+ request causes 2nd request to be rejected by Wizzair
-// (could not figured out why, closing connection didn't helped, cleaning cookies no luck either)
-func CopyClient(wizz *WizzClient) *WizzClient {
-	httpClient := resty.New()
-	return &WizzClient{
-		client: httpClient.
-			SetHostURL(wizz.client.HostURL).
-			SetCloseConnection(true).
-			SetDebug(false),
-	}
-}
-
 // SearchFlights Search flights
 func (wizz *WizzClient) SearchFlights(filter SearchFilterDto) (*SearchResultDto, error) {
 	respDto := &SearchResultDto{}
