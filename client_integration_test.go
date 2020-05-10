@@ -52,7 +52,7 @@ func TestGetMultiplePrices(t *testing.T) {
 	startTime := time.Now()
 	count := 0
 
-	for _, departure := range cities.Cities[:1] {
+	for _, departure := range cities.Cities[:10] {
 		for _, destination := range departure.Connections {
 			outboundId := ConnectionId{
 				Departure:   departure.Iata,
