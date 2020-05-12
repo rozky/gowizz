@@ -40,7 +40,7 @@ func NewCustomClient(metadataURL string) (*WizzClient, error) {
 			client: httpClient.
 				SetHostURL(metadataDto.ApiURL).
 				SetCloseConnection(false).
-				SetDebug(false),
+				SetDebug(true),
 		}, nil
 	}
 }
