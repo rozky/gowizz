@@ -22,7 +22,7 @@ type ConnectionId struct {
 func TestNewClient(t *testing.T) {
 
 	// when
-	wizz, err := NewCustomClient(MetadataURL)
+	wizz, err := NewCustomClient(MetadataURL, false)
 
 	// then
 	require.Nil(t, err)
@@ -76,7 +76,7 @@ func TestGetMultiplePrices(t *testing.T) {
 }
 
 func TestGetCities(t *testing.T) {
-	wizz, _ := NewCustomClient(MetadataURL)
+	wizz, _ := NewCustomClient(MetadataURL, false)
 
 	// when
 	respDto, err := wizz.GetCities()
@@ -97,7 +97,7 @@ func TestGetCities(t *testing.T) {
 }
 
 func TestSearchFlights(t *testing.T) {
-	wizz, _ := NewCustomClient(MetadataURL)
+	wizz, _ := NewCustomClient(MetadataURL, false)
 
 	reqDto := SearchFilterDto{
 		FlightList: []FlightFilter{
@@ -125,7 +125,7 @@ func TestSearchFlights(t *testing.T) {
 func TestTimetableSearch(t *testing.T) {
 	rand.Seed(time.Now().UnixNano())
 
-	wizz, _ := NewCustomClient(MetadataURL)
+	wizz, _ := NewCustomClient(MetadataURL, false)
 
 	reqDto := TimetableSearchFilterDto{
 		FlightList: []TimetableFlightFilter{
@@ -153,7 +153,7 @@ func TestTimetableSearch(t *testing.T) {
 	require.Nil(t, err)
 	log(respDto)
 
-	wizz, _ = NewCustomClient(MetadataURL)
+	wizz, _ = NewCustomClient(MetadataURL, false)
 	//time.Sleep(time.Duration(5) * time.Second)
 	respDto, err = wizz.TimetableSearch(reqDto)
 	require.Nil(t, err)
@@ -191,7 +191,7 @@ func TestTimetableSearch(t *testing.T) {
 }
 
 func getPrices(outboundId ConnectionId) {
-	wizz, _ := NewCustomClient(MetadataURL)
+	wizz, _ := NewCustomClient(MetadataURL, false)
 
 	reqDto := TimetableSearchFilterDto{
 		FlightList: []TimetableFlightFilter{
@@ -223,7 +223,7 @@ func getPrices(outboundId ConnectionId) {
 }
 
 func getCities() *CitiesDto {
-	wizz, _ := NewCustomClient(MetadataURL)
+	wizz, _ := NewCustomClient(MetadataURL, false)
 
 	// when
 	if cities, err := wizz.GetCities(); err != nil {

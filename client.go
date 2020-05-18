@@ -16,7 +16,7 @@ type parser func([]byte) (interface{}, error)
 
 // NewClientOrErr Creates a new WizzClient or panic with error
 func NewClientOrErr() *WizzClient {
-	if client, err := NewCustomClient(MetadataURL); err != nil {
+	if client, err := NewCustomClient(MetadataURL, false); err != nil {
 		panic(err)
 	} else {
 		return client
@@ -25,12 +25,12 @@ func NewClientOrErr() *WizzClient {
 
 // NewClient Creates a new WizzClient
 func NewClient() (*WizzClient, error) {
-	return NewCustomClient(MetadataURL)
+	return NewCustomClient(MetadataURL, false)
 }
 
 // NewCustomClient Creates a new WizzClient using provided matadata URL to retrieve current Wizzair API URL
-func NewCustomClient(metadataURL string) (*WizzClient, error) {
-	httpClient := resty.New().SetDebug(true)
+func NewCustomClient(metadataURL string, debug bool) (*WizzClient, error) {
+	httpClient := resty.New().SetDebug(debug)
 	if resp, err := httpClient.R().SetHeader("User-Agent", UserAgent).Get(metadataURL); err != nil {
 		return nil, err
 	} else if metadataDto, err := parseMetadataDto(resp.Body()); err != nil {
