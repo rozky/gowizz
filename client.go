@@ -15,8 +15,8 @@ type WizzClient struct {
 type parser func([]byte) (interface{}, error)
 
 // NewClientOrErr Creates a new WizzClient or panic with error
-func NewClientOrErr() *WizzClient {
-	if client, err := NewCustomClient(MetadataURL, false); err != nil {
+func NewClientOrErr(debug bool) *WizzClient {
+	if client, err := NewCustomClient(MetadataURL, debug); err != nil {
 		panic(err)
 	} else {
 		return client
@@ -24,8 +24,8 @@ func NewClientOrErr() *WizzClient {
 }
 
 // NewClient Creates a new WizzClient
-func NewClient() (*WizzClient, error) {
-	return NewCustomClient(MetadataURL, false)
+func NewClient(debug bool) (*WizzClient, error) {
+	return NewCustomClient(MetadataURL, debug)
 }
 
 // NewCustomClient Creates a new WizzClient using provided matadata URL to retrieve current Wizzair API URL
