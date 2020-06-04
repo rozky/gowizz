@@ -68,13 +68,13 @@ func (wizz *WizzClient) doGet(path string, respDto interface{}) error {
 		SetHeader("Content-Type", "application/json;charset=UTF-8").
 		SetHeader("User-Agent", UserAgent).
 		SetHeader("Accept-Encoding", "gzip, deflate, br").
-		SetHeader("authority", "be.wizzair.com").
-		SetHeader("accept", "application/json, text/plain, */*").
-		SetHeader("origin", "https://wizzair.com").
-		SetHeader("sec-fetch-site", "same-site").
-		SetHeader("sec-fetch-mode", "cors").
-		SetHeader("referer", "https://wizzair.com/en-gb/flights/timetable").
-		SetHeader("accept-language", "en-GB,en;q=0.9,hu-HU;q=0.8,hu;q=0.7,en-US;q=0.6").
+		//SetHeader("authority", "be.wizzair.com").
+		//SetHeader("accept", "application/json, text/plain, */*").
+		//SetHeader("origin", "https://wizzair.com").
+		//SetHeader("sec-fetch-site", "same-site").
+		//SetHeader("sec-fetch-mode", "cors").
+		//SetHeader("referer", "https://wizzair.com/en-gb/flights/timetable").
+		//SetHeader("accept-language", "en-GB,en;q=0.9,hu-HU;q=0.8,hu;q=0.7,en-US;q=0.6").
 		Get(path)
 
 	if resp != nil && resp.IsError() {
@@ -91,13 +91,13 @@ func (wizz *WizzClient) doPost(path string, reqDto interface{}, respDto interfac
 		SetHeader("Content-Type", "application/json;charset=UTF-8").
 		SetHeader("User-Agent", UserAgent).
 		SetHeader("Accept-Encoding", "gzip, deflate, br").
-		SetHeader("authority", "be.wizzair.com").
-		SetHeader("accept", "application/json, text/plain, */*").
-		SetHeader("origin", "https://wizzair.com").
-		SetHeader("sec-fetch-site", "same-site").
-		SetHeader("sec-fetch-mode", "cors").
-		SetHeader("referer", "https://wizzair.com/en-gb/flights/timetable").
-		SetHeader("accept-language", "en-GB,en;q=0.9,hu-HU;q=0.8,hu;q=0.7,en-US;q=0.6").
+		//SetHeader("authority", "be.wizzair.com").
+		//SetHeader("accept", "application/json, text/plain, */*").
+		//SetHeader("origin", "https://wizzair.com").
+		//SetHeader("sec-fetch-site", "same-site").
+		//SetHeader("sec-fetch-mode", "cors").
+		//SetHeader("referer", "https://wizzair.com/en-gb/flights/timetable").
+		//SetHeader("accept-language", "en-GB,en;q=0.9,hu-HU;q=0.8,hu;q=0.7,en-US;q=0.6").
 		SetBody(reqDto).
 		SetResult(respDto).
 		Post(path)
