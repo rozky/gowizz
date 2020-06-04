@@ -190,6 +190,10 @@ type Amount struct {
 	float64
 }
 
+func (a *Amount) Value() float64 {
+	return a.float64
+}
+
 func (a *Amount) UnmarshalJSON(b []byte) error {
 	var amount float64
 	err := json.Unmarshal(b, &amount)
