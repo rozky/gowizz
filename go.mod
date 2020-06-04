@@ -8,6 +8,7 @@ require (
 	github.com/fsnotify/fsnotify v1.4.7 // indirect
 	github.com/go-resty/resty/v2 v2.1.0
 	github.com/hashicorp/hcl v1.0.0 // indirect
+	github.com/kr/pretty v0.2.0
 	github.com/magiconair/properties v1.8.1 // indirect
 	github.com/mitchellh/mapstructure v1.1.2 // indirect
 	github.com/pelletier/go-toml v1.6.0 // indirect

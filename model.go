@@ -1,6 +1,7 @@
 package gowizz
 
 import (
+	"encoding/json"
 	"math/rand"
 )
 
@@ -146,8 +147,8 @@ type FlightFare struct {
 }
 
 type FlightPrice struct {
-	Amount       float32 `json:"amount"`
-	CurrencyCode string  `json:"currencyCode"`
+	Amount       Amount `json:"amount"`
+	CurrencyCode string `json:"currencyCode"`
 }
 
 type TimetableSearchFilterDto struct {
@@ -166,15 +167,16 @@ type TimetableFlightFilter struct {
 }
 
 type TimetableSearchResultDto struct {
-	OutboundFlights []TimetableOutboundFlight `json:"outboundFlights"`
-	ReturnFlights   []TimetableOutboundFlight `json:"returnFlights"`
+	OutboundFlights []TimetableFlight `json:"outboundFlights"`
+	ReturnFlights   []TimetableFlight `json:"returnFlights"`
 }
 
-type TimetableOutboundFlight struct {
+type TimetableFlight struct {
 	DepartureStation string      `json:"departureStation"`
 	ArrivalStation   string      `json:"arrivalStation"`
 	DepartureDate    string      `json:"departureDate"`
 	DepartureDates   []string    `json:"departureDates"`
+	PriceType        string      `json:"priceType"` // price, soldOut, wdc, regular
 	Price            FlightPrice `json:"price"`
 }
 
@@ -182,6 +184,20 @@ type Connection struct {
 	Departure   string
 	Destination string
 	BothWays    bool
+}
+
+type Amount struct {
+	float64
+}
+
+func (a *Amount) UnmarshalJSON(b []byte) error {
+	var amount float64
+	err := json.Unmarshal(b, &amount)
+	if err != nil {
+		return err
+	}
+	*a = Amount{float64: float64(int64(amount*100.0)) / 100}
+	return nil
 }
 
 func GetRandomUserAgent() string {

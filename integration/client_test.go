@@ -1,7 +1,9 @@
-package gowizz
+package integration
 
 import (
 	"fmt"
+	"github.com/kr/pretty"
+	"github.com/rozky/gowizz"
 	"math/rand"
 	"testing"
 	"time"
@@ -11,7 +13,7 @@ import (
 )
 
 const (
-	debugEnabled = true
+	debugEnabled = false
 )
 
 type ConnectionId struct {
@@ -22,7 +24,7 @@ type ConnectionId struct {
 func TestNewClient(t *testing.T) {
 
 	// when
-	wizz, err := NewCustomClient(MetadataURL, false)
+	wizz, err := gowizz.NewCustomClient(gowizz.MetadataURL, debugEnabled)
 
 	// then
 	require.Nil(t, err)
@@ -76,7 +78,7 @@ func TestGetMultiplePrices(t *testing.T) {
 }
 
 func TestGetCities(t *testing.T) {
-	wizz, _ := NewCustomClient(MetadataURL, false)
+	wizz, _ := gowizz.NewCustomClient(gowizz.MetadataURL, debugEnabled)
 
 	// when
 	respDto, err := wizz.GetCities()
@@ -97,11 +99,11 @@ func TestGetCities(t *testing.T) {
 }
 
 func TestSearchFlights(t *testing.T) {
-	wizz, _ := NewCustomClient(MetadataURL, false)
+	wizz, _ := gowizz.NewCustomClient(gowizz.MetadataURL, debugEnabled)
 
-	reqDto := SearchFilterDto{
-		FlightList: []FlightFilter{
-			FlightFilter{
+	reqDto := gowizz.SearchFilterDto{
+		FlightList: []gowizz.FlightFilter{
+			gowizz.FlightFilter{
 				DepartureStation: "TAT",
 				ArrivalStation:   "LTN",
 				DepartureDate:    "2020-06-10",
@@ -123,19 +125,51 @@ func TestSearchFlights(t *testing.T) {
 }
 
 func TestTimetableSearch(t *testing.T) {
+	wizz, _ := gowizz.NewCustomClient(gowizz.MetadataURL, debugEnabled)
+
+	reqDto := gowizz.TimetableSearchFilterDto{
+		FlightList: []gowizz.TimetableFlightFilter{
+			{
+				DepartureStation: "TAT",
+				ArrivalStation:   "LTN",
+				From:             time.Now().AddDate(0, 0, 31).Format("2006-01-02"),
+				To:               time.Now().AddDate(0, 0, 37).Format("2006-01-02"),
+			},
+			{
+				DepartureStation: "LTN",
+				ArrivalStation:   "TAT",
+				From:             time.Now().AddDate(0, 0, 31).Format("2006-01-02"),
+				To:               time.Now().AddDate(0, 0, 37).Format("2006-01-02"),
+			},
+		},
+		AdultCount:  1,
+		ChildCount:  0,
+		InfantCount: 0,
+		Wdc:         false,
+	}
+
+	// when
+	respDto, err := wizz.TimetableSearch(reqDto)
+
+	// then
+	assert.NoError(t, err)
+	pretty.Println(respDto)
+}
+
+func TestTimetableSearch_MultipleCalls(t *testing.T) {
 	rand.Seed(time.Now().UnixNano())
 
-	wizz, _ := NewCustomClient(MetadataURL, false)
+	wizz, _ := gowizz.NewCustomClient(gowizz.MetadataURL, debugEnabled)
 
-	reqDto := TimetableSearchFilterDto{
-		FlightList: []TimetableFlightFilter{
-			TimetableFlightFilter{
+	reqDto := gowizz.TimetableSearchFilterDto{
+		FlightList: []gowizz.TimetableFlightFilter{
+			{
 				DepartureStation: "TAT",
 				ArrivalStation:   "LTN",
 				From:             time.Now().AddDate(0, 0, 31).Format("2006-01-02"),
 				To:               time.Now().AddDate(0, 0, 61).Format("2006-01-02"),
 			},
-			TimetableFlightFilter{
+			{
 				DepartureStation: "LTN",
 				ArrivalStation:   "TAT",
 				From:             time.Now().AddDate(0, 0, 31).Format("2006-01-02"),
@@ -150,14 +184,14 @@ func TestTimetableSearch(t *testing.T) {
 
 	// when
 	respDto, err := wizz.TimetableSearch(reqDto)
-	require.Nil(t, err)
-	log(respDto)
+	assert.NoError(t, err)
+	pretty.Println(respDto)
 
-	wizz, _ = NewCustomClient(MetadataURL, false)
+	wizz, _ = gowizz.NewCustomClient(gowizz.MetadataURL, debugEnabled)
 	//time.Sleep(time.Duration(5) * time.Second)
 	respDto, err = wizz.TimetableSearch(reqDto)
-	require.Nil(t, err)
-	log(respDto)
+	assert.NoError(t, err)
+	pretty.Println(respDto)
 
 	//wizz, _ = NewCustomClient(MetadataURL)
 	//respDto, err = wizz.TimetableSearch(reqDto)
@@ -191,10 +225,10 @@ func TestTimetableSearch(t *testing.T) {
 }
 
 func getPrices(outboundId ConnectionId) {
-	wizz, _ := NewCustomClient(MetadataURL, false)
+	wizz, _ := gowizz.NewCustomClient(gowizz.MetadataURL, debugEnabled)
 
-	reqDto := TimetableSearchFilterDto{
-		FlightList: []TimetableFlightFilter{
+	reqDto := gowizz.TimetableSearchFilterDto{
+		FlightList: []gowizz.TimetableFlightFilter{
 			{
 				DepartureStation: outboundId.Departure,
 				ArrivalStation:   outboundId.Destination,
@@ -222,8 +256,8 @@ func getPrices(outboundId ConnectionId) {
 	}
 }
 
-func getCities() *CitiesDto {
-	wizz, _ := NewCustomClient(MetadataURL, false)
+func getCities() *gowizz.CitiesDto {
+	wizz, _ := gowizz.NewCustomClient(gowizz.MetadataURL, debugEnabled)
 
 	// when
 	if cities, err := wizz.GetCities(); err != nil {
