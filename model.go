@@ -88,8 +88,8 @@ type City struct {
 	ShortName   string          `json:"shortName"`
 	CountryName string          `json:"countryName"`
 	CountryCode string          `json:"countryCode"`
-	Longitude   float32         `json:"longitude"`
-	Latitude    float32         `json:"latitude"`
+	Longitude   float64         `json:"longitude"`
+	Latitude    float64         `json:"latitude"`
 	Connections []ConnectedCity `json:"connections"`
 }
 
