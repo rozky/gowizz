@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	debugEnabled = false
+	debugEnabled = true
 )
 
 type ConnectionId struct {
@@ -21,14 +21,15 @@ type ConnectionId struct {
 	Destination string
 }
 
-func TestNewClient(t *testing.T) {
+func TestNewCustomClient_shouldCreateNewClient(t *testing.T) {
 
 	// when
 	wizz, err := gowizz.NewCustomClient(gowizz.MetadataURL, debugEnabled)
 
 	// then
-	require.Nil(t, err)
-	assert.NotNil(t, wizz)
+	if assert.NoError(t, err) {
+		assert.NotNil(t, wizz)
+	}
 }
 
 func TestGetConnections(t *testing.T) {
@@ -103,10 +104,10 @@ func TestSearchFlights(t *testing.T) {
 
 	reqDto := gowizz.SearchFilterDto{
 		FlightList: []gowizz.FlightFilter{
-			gowizz.FlightFilter{
+			{
 				DepartureStation: "TAT",
 				ArrivalStation:   "LTN",
-				DepartureDate:    "2020-06-10",
+				DepartureDate:    time.Now().Format("2006-01-02"),
 			},
 		},
 		AdultCount:  1,
@@ -120,8 +121,9 @@ func TestSearchFlights(t *testing.T) {
 	log(respDto)
 
 	// then
-	require.Nil(t, err)
-	require.NotNil(t, respDto)
+	if assert.NoError(t, err) {
+		assert.NotNil(t, respDto)
+	}
 }
 
 func TestTimetableSearch(t *testing.T) {
@@ -152,8 +154,9 @@ func TestTimetableSearch(t *testing.T) {
 	respDto, err := wizz.TimetableSearch(reqDto)
 
 	// then
-	assert.NoError(t, err)
-	pretty.Println(respDto)
+	if assert.NoError(t, err) {
+		assert.NotNil(t, respDto)
+	}
 }
 
 func TestTimetableSearch_MultipleCalls(t *testing.T) {
@@ -269,6 +272,6 @@ func getCities() *gowizz.CitiesDto {
 
 func log(resp interface{}) {
 	if debugEnabled {
-		fmt.Printf("%+v\n", resp)
+		pretty.Println(resp)
 	}
 }

@@ -12,7 +12,7 @@ const (
 	WizzBaseURL = "https://wizzair.com/"
 
 	// MetadataURL MetadataURL
-	MetadataURL = WizzBaseURL + "/static_fe/metadata.json"
+	MetadataURL = WizzBaseURL + "static_fe/metadata.json"
 
 	// CitiesPath Endpoint that returns information about cities Wizzair flight to/from
 	CitiesPath = "/asset/map?languageCode=en-gb&forceJavascriptOutput=false"
